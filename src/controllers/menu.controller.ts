@@ -12,15 +12,24 @@ export const insert = (req: Request, res: Response) => {
 		.then((data: Menu) => {
 			res.send(data);
 		})
-		.catch((err) => {
+		.catch(() => {
 			res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
 		});
 };
 
 export const getAll = async (req: Request, res: Response) => {
-	const menus = await prisma.menu.findMany({});
+	const menus = await prisma.menu.findMany({
+		include: {
+			Content: true,
+		},
+	});
 
-	const treeList: any = [];
+	const lists = menus.map(({ Content: children, ...items }) => ({
+		...items,
+		children,
+	}));
+
+	/* const treeList: any = [];
 
 	menus.forEach((menu: Menu) => {
 		if (menu.parentId === null) {
@@ -28,9 +37,9 @@ export const getAll = async (req: Request, res: Response) => {
 
 			treeList.push({ ...menu, children: childrens });
 		}
-	});
+	}); */
 
-	res.send(treeList);
+	res.send(lists);
 };
 
 export const remove = async (req: Request, res: Response) => {

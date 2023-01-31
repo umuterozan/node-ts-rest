@@ -11,8 +11,36 @@ datasource db {
 }
 
 model Menu {
-  id       Int    @id @default(autoincrement())
-  title    String @db.VarChar(255)
-  slug     String @db.VarChar(255)
-  parentId Int?   @db.Int
+  id       Int       @id @default(autoincrement())
+  title    String    @db.VarChar(255)
+  slug     String    @db.VarChar(255)
+  parentId Int?      @db.Int
+  Content  Content[]
+}
+
+model Content {
+  id        Int      @id @default(autoincrement())
+  menu      Menu     @relation(fields: [menuId], references: [id])
+  menuId    Int      @db.Int
+  icon      String   @db.VarChar(255)
+  brief     String   @db.VarChar(50)
+  slug      String   @db.VarChar(50)
+  content   String   @db.Text
+  title     String   @db.VarChar(255)
+  image     String?  @db.VarChar(255)
+  createdAt DateTime @default(now())
+}
+
+model Admin {
+  id       Int     @id @default(autoincrement())
+  username String  @db.VarChar(25)
+  password String  @db.VarChar(255)
+  Token    Token[]
+}
+
+model Token {
+  id      Int    @id @default(autoincrement())
+  token   String @db.VarChar(255)
+  admin   Admin  @relation(fields: [adminId], references: [id])
+  adminId Int    @db.Int
 }
